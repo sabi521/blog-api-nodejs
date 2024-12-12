@@ -110,4 +110,46 @@ router.post("/search", async (req, res) => {
   }
 });
 
+/**
+ * about /
+ * About Page
+ */
+
+router.get("/about", async (req, res) => {
+  const locals = {
+    title: "About Me",
+    description: "Learn more about the creator of this blog.",
+  };
+
+  try {
+    res.render("about", {
+      locals,
+      currentRoute: "/about",
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+/**
+ * contact /
+ * Contact Page
+ */
+
+router.get("/contact", async (req, res) => {
+  const locals = {
+    title: "Contact Me",
+    description: "Learn more about the creator of this blog.",
+  };
+
+  try {
+    res.render("contact", {
+      locals,
+      currentRoute: "/contact",
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 module.exports = router;
