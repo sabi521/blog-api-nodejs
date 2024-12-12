@@ -152,4 +152,18 @@ router.get("/contact", async (req, res) => {
   }
 });
 
+/**
+ * GET /api/posts
+ * Fetch all posts as JSON
+ */
+router.get("/api/posts", async (req, res) => {
+  try {
+    const posts = await Post.find().sort({ createdAt: -1 }); // Sort by latest
+    res.status(200).json(posts); // Send posts as JSON
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to fetch posts" });
+  }
+});
+
 module.exports = router;
