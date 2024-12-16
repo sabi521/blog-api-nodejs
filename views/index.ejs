@@ -16,12 +16,17 @@
 
   <ul class="article-ul">
     <% data.forEach(post => { %>
-    <li>
+    <li class="article-item">
       <a href="/post/<%= post._id %>">
-        <span><%= post.title %></span>
-        <span class="article-list__date"
-          ><%= post.createdAt.toDateString() %></span
-        >
+        <% if (post.imageUrl) { %>
+        <img
+          src="<%= post.imageUrl %>"
+          alt="<%= post.title %> image"
+          class="article-image thumbnail-image"
+        />
+        <% } %>
+        <span class="article-title"><%= post.title %></span>
+        <span class="article-date"><%= post.createdAt.toDateString() %></span>
       </a>
     </li>
     <% }) %>

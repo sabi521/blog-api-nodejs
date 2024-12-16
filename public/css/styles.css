@@ -192,6 +192,13 @@ img {
   margin: 5px 0 40px 0;
 }
 
+.post-image {
+  width: 200px;
+}
+.thumbnail-image {
+  width: 100px;
+}
+
 /* Home Article List */
 .articles__heading {
   margin-top: 4rem;
@@ -221,6 +228,7 @@ img {
   justify-content: space-between;
   text-decoration: none;
   margin: 18px 0;
+  gap: 20px;
 }
 
 @media only screen and (min-width: 768px) {

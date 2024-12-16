@@ -5,17 +5,26 @@
 
 <ul class="admin-posts">
   <% data.forEach(post => { %>
-
   <li>
-    <a href="/post/<%= post._id %>"> <%= post.title %> &nearr; </a>
+    <div class="post-details">
+      <!-- Display image if available -->
+      <% if (post.imageUrl) { %>
+      <img src="<%= post.imageUrl %>" alt="Post Image" class="post-image" />
+      <% } else { %>
+      <img src="/default-image.jpg" alt="Default Image" class="post-image" />
+      <% } %>
+
+      <!-- Post Title -->
+      <a href="/post/<%= post._id %>"> <%= post.title %> &nearr; </a>
+    </div>
+
+    <!-- Edit and Delete Buttons -->
     <div class="admin-post-controls">
       <a href="/edit-post/<%= post._id %>" class="btn">Edit</a>
-
       <form action="/delete-post/<%= post._id %>?_method=DELETE" method="POST">
         <input type="submit" value="Delete" class="btn-delete btn" />
       </form>
     </div>
   </li>
-
   <% }) %>
 </ul>

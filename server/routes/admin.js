@@ -5,6 +5,8 @@ const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
+const upload = require("../middleware/upload"); // Import the upload middleware
+
 const adminLayout = "../views/layouts/admin";
 const jwtSecret = process.env.JWT_SECRET;
 
@@ -117,26 +119,38 @@ router.get("/add-post", authMiddleware, async (req, res) => {
 });
 
 /**
- * POST /
- * Admin - Create New Post
+ * POST /add-post
+ * Admin - Create New Post with Image Upload
  */
-router.post("/add-post", authMiddleware, async (req, res) => {
-  try {
+router.post(
+  "/add-post",
+  authMiddleware,
+  upload.single("image"),
+  async (req, res) => {
     try {
+      // Destructure post data
+      const { title, body } = req.body;
+
+      // Get the uploaded image path if an image was uploaded
+      const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
+
+      // Create a new Post document
       const newPost = new Post({
-        title: req.body.title,
-        body: req.body.body,
+        title,
+        body,
+        imageUrl, // Store image path
       });
 
-      await Post.create(newPost);
-      res.redirect("/dashboard");
+      // Save the post to MongoDB
+      await newPost.save();
+
+      res.redirect("/dashboard"); // Redirect back to the dashboard
     } catch (error) {
-      console.log(error);
+      console.error("Error adding post:", error);
+      res.status(500).send("Server Error");
     }
-  } catch (error) {
-    console.log(error);
   }
-});
+);
 
 /**
  * GET /
@@ -162,22 +176,40 @@ router.get("/edit-post/:id", authMiddleware, async (req, res) => {
 });
 
 /**
- * PUT /
- * Admin - Create New Post
+ * PUT /edit-post/:id
+ * Admin - Update Existing Post
  */
-router.put("/edit-post/:id", authMiddleware, async (req, res) => {
-  try {
-    await Post.findByIdAndUpdate(req.params.id, {
-      title: req.body.title,
-      body: req.body.body,
-      updatedAt: Date.now(),
-    });
+router.put(
+  "/edit-post/:id",
+  authMiddleware,
+  upload.single("image"),
+  async (req, res) => {
+    try {
+      const { title, body } = req.body;
 
-    res.redirect(`/edit-post/${req.params.id}`);
-  } catch (error) {
-    console.log(error);
+      // Prepare updated fields
+      const updatedPost = {
+        title,
+        body,
+        updatedAt: Date.now(),
+      };
+
+      // If a new image is uploaded, add the imageUrl field
+      if (req.file) {
+        updatedPost.imageUrl = "/uploads/" + req.file.filename;
+      }
+
+      // Update the post
+      await Post.findByIdAndUpdate(req.params.id, updatedPost);
+
+      // Redirect to the dashboard
+      res.redirect("/dashboard");
+    } catch (error) {
+      console.log(error);
+      res.status(500).send("Server Error");
+    }
   }
-});
+);
 
 /**
  * POST /
